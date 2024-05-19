@@ -11,14 +11,13 @@ export function closePopup(popup) {
   document.removeEventListener('keydown', closePopupEsc);
 }
 
-export function closePopupOverlay(evt) {
+function closePopupOverlay(evt) {
   if (evt.currentTarget === evt.target) {
-    const popupOpen = document.querySelector('.popup_is-opened');
-    closePopup(popupOpen)
+    closePopup(evt.target);
   }
 }
 
-export function closePopupEsc(evt) {
+function closePopupEsc(evt) {
   if (evt.key === "Escape") {
     const popupOpen = document.querySelector('.popup_is-opened');
     closePopup(popupOpen);

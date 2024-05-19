@@ -9,16 +9,22 @@
 
 // @todo: Вывести карточки на страницу
 import './index.css';
-import {placesList, createCard, initialCards} from './cards.js';
+import {createCard, initialCards, deleteCard, likeCard} from './cards.js';
 import {openPopup, closePopup} from './modal.js';
 
-function showInitialCards() {
-    initialCards.forEach (function ({name, link}) {
-      placesList.append(createCard(link, name));
-    });
-  }
+const placesList = document.querySelector(".places__list");
 
-showInitialCards();
+function showInitialCards(dataList) {
+  dataList.forEach(function(element) {
+    placesList.append(createCard(element, {
+      delete: deleteCard,
+      like: likeCard,
+      viewing: viewingImage
+    }));
+  });
+}
+
+showInitialCards(initialCards);
 
 const popupTypeEdit = document.querySelector('.popup_type_edit');
 const formElement = popupTypeEdit.querySelector('.popup__form');
@@ -45,12 +51,12 @@ openPopup(popupTypeEdit);
 }
 
 profileEditButton.addEventListener('click', openEditPopup);
+
 popupCloseButton.addEventListener('click', function () {
 closePopup(popupTypeEdit);
-});  
-formElement.addEventListener('submit', handleFormSubmit);
+});
 
-//
+formElement.addEventListener('submit', handleFormSubmit);
 
 const popupNewCard = document.querySelector('.popup_type_new-card');
 const profileAddButton = document.querySelector('.profile__add-button');
@@ -59,13 +65,19 @@ const formElementCard = popupNewCard.querySelector('.popup__form');
 const inputTypeName = document.querySelector('.popup__input_type_card-name');
 const inputTypeUrl = document.querySelector('.popup__input_type_url');
 
-function handleAddCard (evt) {
+function handleAddCard(evt) {
   evt.preventDefault();
-  const inputTypeNameValue = inputTypeName.value;
-  const inputTypeUrlValue = inputTypeUrl.value;
-  createNewCard(inputTypeNameValue, inputTypeUrlValue);
-  formElementCard.reset();
+  let element = {
+    name: inputTypeName.value,
+    link: inputTypeUrl.value,
+  };
   closePopup(popupNewCard);
+  placesList.prepend(createCard(element, {
+    delete: deleteCard,
+    like: likeCard,
+    viewing: viewingImage
+  }));
+  formElementCard.reset();
 }
 
 profileAddButton.addEventListener('click', function () {
@@ -78,22 +90,17 @@ profileCloseButton.addEventListener('click', function () {
 
 formElementCard.addEventListener('submit', handleAddCard);
 
-function createNewCard (inputTypeNameValue, inputTypeUrlValue) {
-  const newCard = createCard(inputTypeUrlValue, inputTypeNameValue);
-  elements.prepend(newCard);
-}
-
-initialCards.forEach(function (card) {
-  createNewCard(card.name, card.link);
-})
-
-//
-
 export const popupTypeImage = document.querySelector('.popup_type_image');
 const popupTypeImageCloseButton = popupTypeImage.querySelector('.popup__close');
+const popupImage = document.querySelector('.popup__image');
+const popupCaption = document.querySelector('.popup__caption');
 
-export const popupImage = document.querySelector('.popup__image');
-export const popupCaption = document.querySelector('.popup__caption');
+function viewingImage(element, data) {
+  openPopup(element);
+  popupImage.src = data["link"];
+  popupImage.alt = data["name"];
+  popupCaption.textContent = data["name"];
+}
 
 popupTypeImageCloseButton.addEventListener('click', function () {
   closePopup(popupTypeImage);

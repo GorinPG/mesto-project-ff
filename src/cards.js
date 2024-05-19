@@ -1,31 +1,34 @@
-import {popupTypeImage, popupImage, popupCaption} from './index.js';
+import {popupTypeImage} from './index.js';
 
 const cardTemplate = document.querySelector('#card-template').content;
-export const placesList = document.querySelector('.places__list');
 
-export function createCard(link, name) {
+export function createCard(data, functions) {
   const card = cardTemplate.querySelector('.card').cloneNode(true);
   const cardImage = card.querySelector('.card__image');
-  cardImage.alt = name;
-  cardImage.src = link;
-  card.querySelector('.card__title').textContent = name;
+  cardImage.alt = data["name"];
+  cardImage.src = data["link"];
+  card.querySelector('.card__title').textContent = data["name"];
   const deleteButton = card.querySelector('.card__delete-button');
   deleteButton.addEventListener('click', function() {
-    card.remove();
+    functions.delete(card);
   });
   const likeButton = card.querySelector('.card__like-button');
   likeButton.addEventListener('click', function (evt) {
-    evt.target.classList.toggle('card__like-button_is-active');
+    functions.like(likeButton);
   });
-  const viewingImage = card.querySelector('.card__image');
-  viewingImage.addEventListener('click', function() {
-    popupImage.alt = name;
-    popupImage.src = link;
-    popupCaption.textContent = name;
-    openPopup(popupTypeImage);
+  cardImage.addEventListener("click", function() {
+    functions.viewing(popupTypeImage, data);
   });
   return card;
 };
+
+export function deleteCard(card) {
+  card.remove();
+}
+
+export function likeCard(button) {
+  button.classList.toggle("card__like-button_is-active");
+}
 
 const arkhyz = new URL("https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg", import.meta.url);
 const chelyabinskOblast = new URL("https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg", import.meta.url);
