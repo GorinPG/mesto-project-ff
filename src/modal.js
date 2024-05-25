@@ -11,7 +11,7 @@ export function closePopup(popup) {
   document.removeEventListener('keydown', closePopupEsc);
 }
 
-function closePopupOverlay(evt) {
+export function closePopupOverlay(evt) {
   if (evt.currentTarget === evt.target) {
     closePopup(evt.target);
   }
