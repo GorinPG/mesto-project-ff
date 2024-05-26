@@ -9,10 +9,10 @@
 
 // @todo: Вывести карточки на страницу
 import './index.css';
-import {createCard, deleteCard} from './cards.js';
-import {openPopup, closePopup, closePopupOverlay} from './modal.js';
-import {enableValidation, clearValidation} from './validation.js';
-import {loadData, updateProfile, likeCardOnLine, updateProfileAvatar, addNewCardOnServer, deleteCardFromServer} from './api.js';
+import {createCard, viewingImage} from './components/card.js';
+import {openPopup, closePopup, closePopupOverlay} from './components/modal.js';
+import {enableValidation, clearValidation} from './components/validation.js';
+import {showUserProfileInfo, loadData, updateProfile, likeCardOnLine, updateProfileAvatar, addNewCardOnServer, deleteCardFromServer} from './components/api.js';
 
 const validationConfig = {
   formSelector: ".popup__form",
@@ -53,13 +53,20 @@ let userDataFields = {
 
 let myID;
 
-loadData(userDataFields, showInitialCards)
-  .then((result) => {
-    myID = result["_id"];
-  })
+loadData()
+  .then(([user, cards]) => {
+    showUserProfileInfo(userDataFields, user);
+    showInitialCards(cards, user["_id"]);
+    myID = user["_id"];
+  });
+
+//loadData(userDataFields, showInitialCards)
+//  .then((result) => {
+//    myID = result["_id"];
+//  })
 
 function showInitialCards(dataList, userData) {
-  dataList.forEach(function(element) {
+  dataList.forEach((element) => {
     placesList.append(createCard(element, {
       delete: deleteCardFromServer,
       like: likeCardOnLine,
@@ -73,6 +80,7 @@ enableValidation(validationConfig);
 
 profileEditButton.addEventListener('click', function() {
   openPopup(popupTypeEdit);
+  formElement.reset();
   formElementName.value = profileTitle.textContent;
   formElementDescription.value = profileDescription.textContent;
   clearValidation(formElement, validationConfig);
@@ -87,6 +95,7 @@ popupCloseButton.addEventListener('click', function() {
 
 imageEditButton.addEventListener('click', function() {
   openPopup(popupTypeAvatar);
+  formElementPopupAvatar.reset();
   clearValidation(popupTypeAvatar, validationConfig);
 });
 
@@ -103,12 +112,11 @@ function handleFormSubmitProfile(evt) {
       name: formElementName.value,
       about: formElementDescription.value,
     },
-    userDataFields
-  );
+    userDataFields);
   closePopup(popupTypeEdit);
 }
 
-formElementDescription.addEventListener('submit', handleFormSubmitProfile);
+formElement.addEventListener('submit', handleFormSubmitProfile);
 
 function handleFormSubmitAvatar(evt) {
   evt.preventDefault();
@@ -116,8 +124,7 @@ function handleFormSubmitAvatar(evt) {
     {
       avatar: formElementAvatar.value,
     },
-    userDataFields
-  );
+    userDataFields);
   closePopup(popupTypeAvatar);
 }
 
@@ -125,6 +132,7 @@ formElementPopupAvatar.addEventListener('submit', handleFormSubmitAvatar);
 
 profileAddButton.addEventListener('click', function() {
   openPopup(popupNewCard);
+  formElementCard.reset();
   clearValidation(formElementCard, validationConfig);
 });
 
@@ -153,22 +161,3 @@ popupNewCard.addEventListener('click', closePopupOverlay);
 profileCloseButton.addEventListener('click', function() {
   closePopup(popupNewCard);
 });
-
-export const popupTypeImage = document.querySelector('.popup_type_image');
-const popupTypeImageCloseButton = popupTypeImage.querySelector('.popup__close');
-const popupImage = document.querySelector('.popup__image');
-const popupCaption = document.querySelector('.popup__caption');
-
-function viewingImage(element, data) {
-  openPopup(element);
-  popupImage.src = data["link"];
-  popupImage.alt = data["name"];
-  popupCaption.textContent = data["name"];
-}
-
-popupTypeImage.addEventListener('click', closePopupOverlay);
-
-popupTypeImageCloseButton.addEventListener('click', function () {
-  closePopup(popupTypeImage);
-});
-
