@@ -26,6 +26,8 @@ const validationConfig = {
 const placesList = document.querySelector('.places__list');
 const popupTypeEdit = document.querySelector('.popup_type_edit');
 const formElement = popupTypeEdit.querySelector('.popup__form');
+const formElementButton = formElement.querySelector('.popup__button');
+
 const formElementName = formElement.elements["name"];
 const formElementDescription = formElement.elements["description"];
 const profileEditButton = document.querySelector('.profile__edit-button');
@@ -36,11 +38,15 @@ const profileAvatar = document.querySelector('.profile__image');
 const imageEditButton = document.querySelector('.profile__edit-image');
 const popupTypeAvatar = document.querySelector('.popup_type_avatar');
 const formElementPopupAvatar = popupTypeAvatar.querySelector('.popup__form');
+const formAvatarButton = formElementPopupAvatar.querySelector('.popup__button');
+
 const popupCloseAvatar = popupTypeAvatar.querySelector('.popup__close');
 const formElementAvatar = formElementPopupAvatar.elements["avatar-lnk"];
 const profileAddButton = document.querySelector('.profile__add-button');
 const popupNewCard = document.querySelector('.popup_type_new-card');
 const formElementCard = popupNewCard.querySelector('.popup__form');
+const popupNewCardButton = formElementCard.querySelector('.popup__button');
+
 const formElementPlaceName = formElementCard.elements["place-name"];
 const formElementPlaceLink = formElementCard.elements["link"];
 const profileCloseButton = popupNewCard.querySelector('.popup__close');
@@ -58,7 +64,8 @@ loadData()
     showUserProfileInfo(userDataFields, user);
     showInitialCards(cards, user["_id"]);
     myID = user["_id"];
-  });
+  })
+  .catch((err) => console.log(err));
 
 //loadData(userDataFields, showInitialCards)
 //  .then((result) => {
@@ -107,25 +114,43 @@ popupCloseAvatar.addEventListener('click', function() {
 
 function handleFormSubmitProfile(evt) {
   evt.preventDefault();
+  formElementButton.textContent = 'Сохранение...';
   updateProfile(
     {
       name: formElementName.value,
       about: formElementDescription.value,
     },
-    userDataFields);
-  closePopup(popupTypeEdit);
+    userDataFields)
+    .then((res) =>{
+      profileTitle.textContent = res.name;
+      profileDescription.textContent = res.about;
+    })
+    .catch((err) => console.log(err))
+    .finally((res) =>{
+      formElementButton.textContent = 'Сохранить';
+      closePopup(popupTypeEdit);
+    })
 }
 
 formElement.addEventListener('submit', handleFormSubmitProfile);
 
 function handleFormSubmitAvatar(evt) {
   evt.preventDefault();
+  formAvatarButton.textContent = 'Сохранение...';
   updateProfileAvatar(
     {
       avatar: formElementAvatar.value,
     },
-    userDataFields);
-  closePopup(popupTypeAvatar);
+    userDataFields)
+      .then((res) =>{
+      profileTitle.textContent = res.name;
+      profileDescription.textContent = res.about;
+    })
+    .catch((err) => console.log(err))
+    .finally((res) =>{
+      formAvatarButton.textContent = 'Сохранить';
+      closePopup(popupTypeAvatar);
+    })
 }
 
 formElementPopupAvatar.addEventListener('submit', handleFormSubmitAvatar);
@@ -140,7 +165,8 @@ formElementCard.addEventListener('submit', handleFormSubmitAddCard);
 
 function handleFormSubmitAddCard(evt) {
   evt.preventDefault();
-  let element = {
+  popupNewCardButton.textContent = 'Сохранение...';
+  const element = {
     name: formElementPlaceName.value,
     link: formElementPlaceLink.value,
   };
@@ -152,8 +178,16 @@ function handleFormSubmitAddCard(evt) {
   myID)
     .then((card) => {
       placesList.prepend(card)
-    });
-  closePopup(popupNewCard);
+    })
+    .then((res) =>{
+      profileTitle.textContent = res.name;
+      profileDescription.textContent = res.about;
+    })
+    .catch((err) => console.log(err))
+    .finally((res) => {
+      popupNewCardButton.textContent = 'Сохранить';
+      closePopup(popupNewCard);
+    });  
 }
 
 popupNewCard.addEventListener('click', closePopupOverlay);
