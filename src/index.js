@@ -9,10 +9,10 @@
 
 // @todo: Вывести карточки на страницу
 import './index.css';
-import {createCard, viewingImage} from './components/card.js';
+import {createCard} from './components/card.js';
 import {openPopup, closePopup, closePopupOverlay} from './components/modal.js';
 import {enableValidation, clearValidation} from './components/validation.js';
-import {showUserProfileInfo, loadData, updateProfile, likeCardOnLine, updateProfileAvatar, addNewCardOnServer, deleteCardFromServer} from './components/api.js';
+import {loadData, updateProfile, likeCardOnLine, updateProfileAvatar, addNewCardOnServer, deleteCardFromServer} from './components/api.js';
 
 const validationConfig = {
   formSelector: ".popup__form",
@@ -51,6 +51,18 @@ const formElementPlaceName = formElementCard.elements["place-name"];
 const formElementPlaceLink = formElementCard.elements["link"];
 const profileCloseButton = popupNewCard.querySelector('.popup__close');
 
+export const popupTypeImage = document.querySelector('.popup_type_image');
+const popupTypeImageCloseButton = popupTypeImage.querySelector('.popup__close');
+const popupImage = document.querySelector('.popup__image');
+const popupCaption = document.querySelector('.popup__caption');
+
+
+function showUserProfileInfo(userDataFields, user) {
+  userDataFields.name.textContent = user.name;
+  userDataFields.about.textContent = user.about;
+  userDataFields.avatar.style.backgroundImage = `url(${user.avatar})`;
+}
+
 let userDataFields = {
   name: profileTitle,
   about: profileDescription,
@@ -67,17 +79,12 @@ loadData()
   })
   .catch((err) => console.log(err));
 
-//loadData(userDataFields, showInitialCards)
-//  .then((result) => {
-//    myID = result["_id"];
-//  })
-
 function showInitialCards(dataList, userData) {
   dataList.forEach((element) => {
     placesList.append(createCard(element, {
       delete: deleteCardFromServer,
       like: likeCardOnLine,
-      viewing: viewingImage
+      viewing: openImagePopup
     },
     userData));
   });
@@ -121,12 +128,11 @@ function handleFormSubmitProfile(evt) {
       about: formElementDescription.value,
     },
     userDataFields)
-    .then((res) =>{
-      profileTitle.textContent = res.name;
-      profileDescription.textContent = res.about;
+    .then((user) => {
+      showUserProfileInfo(userDataFields, user);
     })
     .catch((err) => console.log(err))
-    .finally((res) =>{
+    .finally(() => {
       formElementButton.textContent = 'Сохранить';
       closePopup(popupTypeEdit);
     })
@@ -142,12 +148,11 @@ function handleFormSubmitAvatar(evt) {
       avatar: formElementAvatar.value,
     },
     userDataFields)
-      .then((res) =>{
-      profileTitle.textContent = res.name;
-      profileDescription.textContent = res.about;
+    .then((user) => {
+      showUserProfileInfo(userDataFields, user);
     })
     .catch((err) => console.log(err))
-    .finally((res) =>{
+    .finally(() => {
       formAvatarButton.textContent = 'Сохранить';
       closePopup(popupTypeAvatar);
     })
@@ -170,21 +175,18 @@ function handleFormSubmitAddCard(evt) {
     name: formElementPlaceName.value,
     link: formElementPlaceLink.value,
   };
-  addNewCardOnServer(element, createCard, {
-    delete: deleteCardFromServer,
-    like: likeCardOnLine,
-    viewing: viewingImage
-  },
-  myID)
-    .then((card) => {
-      placesList.prepend(card)
-    })
-    .then((res) =>{
-      profileTitle.textContent = res.name;
-      profileDescription.textContent = res.about;
+  addNewCardOnServer(element).then((card) => {
+    placesList.prepend(createCard(
+      card,
+      {
+        delete: deleteCardFromServer,
+        like: likeCardOnLine,
+        viewing: openImagePopup
+      },
+  myID));
     })
     .catch((err) => console.log(err))
-    .finally((res) => {
+    .finally(() => {
       popupNewCardButton.textContent = 'Сохранить';
       closePopup(popupNewCard);
     });  
@@ -194,4 +196,17 @@ popupNewCard.addEventListener('click', closePopupOverlay);
 
 profileCloseButton.addEventListener('click', function() {
   closePopup(popupNewCard);
+});
+
+function openImagePopup(element, data) {
+  openPopup(element);
+  popupImage.alt = `Фото - ${data["name"]}`;
+  popupImage.src = data["link"];
+  popupCaption.textContent = data["name"];
+}
+
+popupTypeImage.addEventListener('click', closePopupOverlay);
+
+popupTypeImageCloseButton.addEventListener('click', function () {
+  closePopup(popupTypeImage);
 });

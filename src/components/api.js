@@ -5,13 +5,6 @@ const config = {
     "Content-Type": "application/json"
   },
 }
-
-export function showUserProfileInfo(userDataFields, user) {
-  userDataFields.name.textContent = user.name;
-  userDataFields.about.textContent = user.about;
-  userDataFields.avatar.style.backgroundImage = `url(${user.avatar})`;
-}
-
 const checkRequest = (res) => {
   if (res.ok) {
     return res.json();
@@ -37,17 +30,6 @@ export const loadData = () => {
   return Promise.all([getUser(), getCards()]);
 }
 
-//export const loadData = (userDataFields, renderFunction) => {
-//  return Promise.all([getUser(), getCards()])
-//    .then((res) => {
-//      let user = res[0];
-//      let cards = res[1];
-//      showUserProfileInfo(userDataFields, user);
-//      renderFunction(cards, user["_id"]);
-//      return user;
-//    });
-//}
-
 export const updateProfile = (manualProfileData, userDataFields) => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: "PATCH",
@@ -56,10 +38,7 @@ export const updateProfile = (manualProfileData, userDataFields) => {
       name: manualProfileData.name,
       about: manualProfileData.about,
     }),
-  }).then((res) => checkRequest(res))
-    .then((user) => {
-      showUserProfileInfo(userDataFields, user);
-    });
+  }).then((res) => checkRequest(res));
 }
 
 export const likeCardOnLine = (cardInfo, isActive) => {
@@ -83,13 +62,10 @@ export const updateProfileAvatar = (manualProfileData, userDataFields) => {
     body: JSON.stringify({
       avatar: manualProfileData.avatar,
     }),
-  }).then((res) => checkRequest(res))
-    .then((user) => {
-      showUserProfileInfo(userDataFields, user);
-    });
+  }).then((res) => checkRequest(res));
 }
 
-export const addNewCardOnServer = (newCardInformation, createCardFunction, cardOperationsFunctions, userData) => {
+export const addNewCardOnServer = (newCardInformation) => {
   return fetch(`${config.baseUrl}/cards`, {
     method: "POST",
     headers: config.headers,
@@ -97,10 +73,7 @@ export const addNewCardOnServer = (newCardInformation, createCardFunction, cardO
       name: newCardInformation.name,
       link: newCardInformation.link
     })
-  }).then((res) => checkRequest(res))
-    .then((card) => {
-      return createCardFunction(card, cardOperationsFunctions, userData);
-    });
+  }).then((res) => checkRequest(res));
 }
 
 export const deleteCardFromServer = (cardInfo) => {
