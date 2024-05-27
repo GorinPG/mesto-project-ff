@@ -39,9 +39,9 @@ const imageEditButton = document.querySelector('.profile__edit-image');
 const popupTypeAvatar = document.querySelector('.popup_type_avatar');
 const formElementPopupAvatar = popupTypeAvatar.querySelector('.popup__form');
 const formAvatarButton = formElementPopupAvatar.querySelector('.popup__button');
-
-const popupCloseAvatar = popupTypeAvatar.querySelector('.popup__close');
 const formElementAvatar = formElementPopupAvatar.elements["avatar-lnk"];
+const popupCloseAvatar = popupTypeAvatar.querySelector('.popup__close');
+
 const profileAddButton = document.querySelector('.profile__add-button');
 const popupNewCard = document.querySelector('.popup_type_new-card');
 const formElementCard = popupNewCard.querySelector('.popup__form');
@@ -55,7 +55,6 @@ export const popupTypeImage = document.querySelector('.popup_type_image');
 const popupTypeImageCloseButton = popupTypeImage.querySelector('.popup__close');
 const popupImage = document.querySelector('.popup__image');
 const popupCaption = document.querySelector('.popup__caption');
-
 
 function showUserProfileInfo(userDataFields, user) {
   userDataFields.name.textContent = user.name;
@@ -143,19 +142,20 @@ formElement.addEventListener('submit', handleFormSubmitProfile);
 function handleFormSubmitAvatar(evt) {
   evt.preventDefault();
   formAvatarButton.textContent = 'Сохранение...';
-  updateProfileAvatar(
+    updateProfileAvatar(
     {
       avatar: formElementAvatar.value,
-    },
-    userDataFields)
+    })
     .then((user) => {
       showUserProfileInfo(userDataFields, user);
     })
-    .catch((err) => console.log(err))
-    .finally(() => {
-      formAvatarButton.textContent = 'Сохранить';
-      closePopup(popupTypeAvatar);
+    .catch((err) => {
+      console.log(err)
     })
+    .finally(() => {
+      formAvatarButton.textContent = 'Сохранить'
+      closePopup(popupTypeAvatar);
+    });
 }
 
 formElementPopupAvatar.addEventListener('submit', handleFormSubmitAvatar);

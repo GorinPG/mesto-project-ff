@@ -1,7 +1,7 @@
 import {popupTypeImage} from '../index.js'
 const cardTemplate = document.querySelector('#card-template').content;
 
-export function createCard(data, functions, currUserData) {
+export function createCard(data, functions, currUserData, openImagePopup) {
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   const cardImage = cardElement.querySelector('.card__image');
   cardImage.alt = `Фото - ${data["name"]}`;

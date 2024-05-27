@@ -5,6 +5,7 @@ const config = {
     "Content-Type": "application/json"
   },
 }
+
 const checkRequest = (res) => {
   if (res.ok) {
     return res.json();
@@ -16,21 +17,25 @@ const getUser = () => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: "GET",
     headers: config.headers
-  }).then((res) => checkRequest(res));
+  }).then((res) => {
+    return checkRequest(res)
+  });
 }
 
 const getCards = () => {
   return fetch(`${config.baseUrl}/cards`, {
     method: "GET",
     headers: config.headers
-  }).then((res) => checkRequest(res));
+  }).then((res) => {
+    return checkRequest(res)
+  });
 }
 
 export const loadData = () => {
   return Promise.all([getUser(), getCards()]);
 }
 
-export const updateProfile = (manualProfileData, userDataFields) => {
+export const updateProfile = (manualProfileData) => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: "PATCH",
     headers: config.headers,
@@ -38,7 +43,9 @@ export const updateProfile = (manualProfileData, userDataFields) => {
       name: manualProfileData.name,
       about: manualProfileData.about,
     }),
-  }).then((res) => checkRequest(res));
+  }).then((res) => {
+    return checkRequest(res)
+  });
 }
 
 export const likeCardOnLine = (cardInfo, isActive) => {
@@ -46,23 +53,29 @@ export const likeCardOnLine = (cardInfo, isActive) => {
     return fetch(`${config.baseUrl}/cards/likes/${cardInfo}`, {
       method: "PUT",
       headers: config.headers
-    }).then((res) => checkRequest(res));
+    }).then((res) => {
+      return checkRequest(res)
+    });
   } else {
     return fetch(`${config.baseUrl}/cards/likes/${cardInfo}`, {
       method: "DELETE",
       headers: config.headers
-    }).then((res) => checkRequest(res));
+    }).then((res) => {
+      return checkRequest(res)
+    });
     }
 }
 
-export const updateProfileAvatar = (manualProfileData, userDataFields) => {
+export const updateProfileAvatar = (manualProfileData) => {
   return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: "PATCH",
     headers: config.headers,
     body: JSON.stringify({
       avatar: manualProfileData.avatar,
-    }),
-  }).then((res) => checkRequest(res));
+    })
+  }).then((res) => {
+    return checkRequest(res);
+  });
 }
 
 export const addNewCardOnServer = (newCardInformation) => {
@@ -73,12 +86,16 @@ export const addNewCardOnServer = (newCardInformation) => {
       name: newCardInformation.name,
       link: newCardInformation.link
     })
-  }).then((res) => checkRequest(res));
+  }).then((res) => {
+    return checkRequest(res)
+  });
 }
 
 export const deleteCardFromServer = (cardInfo) => {
   return fetch(`${config.baseUrl}/cards/${cardInfo}`, {
     method: "DELETE",
     headers: config.headers
-  }).then((res) => checkRequest(res));
+  }).then((res) => {
+    return checkRequest(res)
+  });
 }
