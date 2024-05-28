@@ -1,7 +1,6 @@
-import {popupTypeImage} from '../index.js'
 const cardTemplate = document.querySelector('#card-template').content;
 
-export function createCard(data, functions, currUserData, openImagePopup) {
+export function createCard(data, functions, currUserData) {
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   const cardImage = cardElement.querySelector('.card__image');
   cardImage.alt = `Фото - ${data["name"]}`;
@@ -10,6 +9,7 @@ export function createCard(data, functions, currUserData, openImagePopup) {
   const deleteButton = cardElement.querySelector('.card__delete-button');
   const likeButton = cardElement.querySelector('.card__like-button');
   const likeAmount = cardElement.querySelector(".card__like-amount");
+  const popupTypeImage = document.querySelector('.popup_type_image');
 
   showLikesInformation(data, currUserData, likeButton, likeAmount);
 

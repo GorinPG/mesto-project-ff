@@ -51,7 +51,7 @@ const formElementPlaceName = formElementCard.elements["place-name"];
 const formElementPlaceLink = formElementCard.elements["link"];
 const profileCloseButton = popupNewCard.querySelector('.popup__close');
 
-export const popupTypeImage = document.querySelector('.popup_type_image');
+const popupTypeImage = document.querySelector('.popup_type_image');
 const popupTypeImageCloseButton = popupTypeImage.querySelector('.popup__close');
 const popupImage = document.querySelector('.popup__image');
 const popupCaption = document.querySelector('.popup__caption');
@@ -129,11 +129,11 @@ function handleFormSubmitProfile(evt) {
     userDataFields)
     .then((user) => {
       showUserProfileInfo(userDataFields, user);
+      closePopup(popupTypeEdit);
     })
     .catch((err) => console.log(err))
     .finally(() => {
       formElementButton.textContent = 'Сохранить';
-      closePopup(popupTypeEdit);
     })
 }
 
@@ -148,13 +148,13 @@ function handleFormSubmitAvatar(evt) {
     })
     .then((user) => {
       showUserProfileInfo(userDataFields, user);
+      closePopup(popupTypeAvatar);
     })
     .catch((err) => {
       console.log(err)
     })
     .finally(() => {
       formAvatarButton.textContent = 'Сохранить'
-      closePopup(popupTypeAvatar);
     });
 }
 
@@ -183,12 +183,12 @@ function handleFormSubmitAddCard(evt) {
         like: likeCardOnLine,
         viewing: openImagePopup
       },
-  myID));
+      myID));
+    closePopup(popupNewCard);
     })
     .catch((err) => console.log(err))
     .finally(() => {
       popupNewCardButton.textContent = 'Сохранить';
-      closePopup(popupNewCard);
     });  
 }
 
@@ -198,15 +198,15 @@ profileCloseButton.addEventListener('click', function() {
   closePopup(popupNewCard);
 });
 
-function openImagePopup(element, data) {
-  openPopup(element);
-  popupImage.alt = `Фото - ${data["name"]}`;
-  popupImage.src = data["link"];
-  popupCaption.textContent = data["name"];
-}
-
 popupTypeImage.addEventListener('click', closePopupOverlay);
 
 popupTypeImageCloseButton.addEventListener('click', function () {
   closePopup(popupTypeImage);
 });
+
+const openImagePopup = (popupTypeImage, data) => {
+  openPopup(popupTypeImage);
+  popupImage.alt = `Фото - ${data["name"]}`;
+  popupImage.src = data["link"];
+  popupCaption.textContent = data["name"];
+}
